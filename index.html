@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <link rel="icon" href="icon.png" />
+<link rel="icon" href="icon.png" />
 <link rel="apple-touch-icon" href="icon.png" />
 <meta name="theme-color" content="#121212" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Big/Small Game" />
+<link rel="manifest" href="manifest.json" />
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -23,6 +24,13 @@
     h1 { font-size: 2rem; margin-top: 20px; }
     <button onclick="toggleTheme()">🌗 Toggle Theme</button>
     #scoreboard, #coins { margin: 10px; font-size: 1.2rem; }
+    <div id="welcome"></div>
+<div id="namePrompt" style="display:none;">
+  <p>Please enter your name:</p>
+  <input id="nameInput" placeholder="Your name" />
+  <button onclick="saveName()">Save</button>
+</div>
+
     button {
       padding: 10px 20px;
       margin: 10px;
@@ -92,6 +100,48 @@
       localStorage.setItem('wins', wins);
       localStorage.setItem('losses', losses);
     }
+    // Load user info from localStorage
+let userName = localStorage.getItem('userName') || null;
+let userCoins = parseInt(localStorage.getItem('userCoins') || "100");
+let userScore = parseInt(localStorage.getItem('userScore') || "0");
+
+function updateUI() {
+  document.getElementById("coins").innerText = "💰 Coins: " + userCoins;
+  document.getElementById("scoreboard").innerText = "🏆 Score: " + userScore;
+  if (userName) {
+    document.getElementById("welcome").innerHTML = `👋 Welcome, <strong>${userName}</strong>!`;
+    document.getElementById("namePrompt").style.display = "none";
+  } else {
+    document.getElementById("namePrompt").style.display = "block";
+  }
+}
+
+function saveName() {
+  userName = document.getElementById("nameInput").value.trim();
+  if (userName) {
+    localStorage.setItem("userName", userName);
+    updateUI();
+  }
+}
+
+// Save updated coins and score after a round
+function saveProgress() {
+  localStorage.setItem("userCoins", userCoins);
+  localStorage.setItem("userScore", userScore);
+}
+
+// Call this after every bet result:
+function handleResult(isWin) {
+  if (isWin) {
+    userScore++;
+    userCoins += 10;
+  } else {
+    userCoins = Math.max(0, userCoins - 10);
+  }
+  updateUI();
+  saveProgress();
+}
+
     // Apply saved theme on load
     document.body.classList.toggle('light', localStorage.getItem('theme') === 'light');
     
@@ -176,6 +226,7 @@
       };
 
     }, 1000);
+    updateUI();
   </script>
 </body>
 </html>
