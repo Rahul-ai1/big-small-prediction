@@ -1,158 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="icon" href="icon.png" />
-<link rel="apple-touch-icon" href="icon.png" />
-<meta name="theme-color" content="#121212" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-title" content="Big/Small Game" />
-<link rel="manifest" href="manifest.json" />
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Big/Small Prediction Game</title>
-  <style>
-    body {
-      <div id="splash" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#121212;color:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;font-size:1.5rem;">
-          🔮 Big/Small Prediction Game Loading...
-      </div>
+  <link rel="icon" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <meta name="theme-color" content="#121212" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Big/Small Game" />
+  <link rel="manifest" href="manifest.json" />
 
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #121212;
-      color: #fff;
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --text-dark: #ffffff;
+      --button-bg-dark: #333;
+      --button-text-dark: #fff;
+
+      --bg-light: #f5f5f5;
+      --text-light: #000000;
+      --button-bg-light: #ddd;
+      --button-text-light: #000;
     }
-    h1 { font-size: 2rem; margin-top: 20px; }
-    <button onclick="toggleTheme()">🌗 Toggle Theme</button>
-    #scoreboard, #coins { margin: 10px; font-size: 1.2rem; }
-    <div id="welcome"></div>
-<div id="namePrompt" style="display:none;">
-  <p>Please enter your name:</p>
-  <input id="nameInput" placeholder="Your name" />
-  <button onclick="saveName()">Save</button>
-</div>
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+      text-align: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.light {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-top: 20px;
+    }
+
+    #splash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      font-size: 1.5rem;
+      user-select: none;
+    }
+
+    body.light #splash {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
 
     button {
       padding: 10px 20px;
-      margin: 10px;
+      margin: 10px 5px;
       font-size: 1rem;
       cursor: pointer;
+      background-color: var(--button-bg-dark);
+      color: var(--button-text-dark);
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
-    #result { margin: 20px; font-size: 1.5rem; }
-    #countdown { font-size: 1.2rem; color: #ccc; }
-<style>
-  :root {
-    --bg: #121212;
-    --text: #ffffff;
-    --button-bg: #333;
-    --button-text: #fff;
-  }
 
-  body.light {
-    --bg: #f5f5f5;
-    --text: #000000;
-    --button-bg: #ddd;
-    --button-text: #000;
-  }
+    body.light button {
+      background-color: var(--button-bg-light);
+      color: var(--button-text-light);
+    }
 
-  body {
-    background-color: var(--bg);
-    color: var(--text);
-    transition: 0.3s ease;
-    font-family: Arial, sans-serif;
-    text-align: center;
-  }
+    #result {
+      margin: 20px;
+      font-size: 1.3rem;
+      min-height: 2rem;
+    }
 
-  h1 { font-size: 2rem; margin-top: 20px; }
-    <button onclick="toggleTheme()">🌗 Toggle Theme</button>
-  #scoreboard, #coins { margin: 10px; font-size: 1.2rem; }
-  button {
-    padding: 10px 20px;
-    margin: 10px;
-    font-size: 1rem;
-    cursor: pointer;
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    border: none;
-    border-radius: 5px;
-  }
+    #countdown {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin-bottom: 10px;
+    }
 
-  #result { margin: 20px; font-size: 1.5rem; }
-  #countdown { font-size: 1.2rem; color: var(--text); }
-</style>
+    #scoreboard, #coins {
+      font-size: 1.2rem;
+      margin: 10px;
+    }
 
+    #namePrompt {
+      margin: 20px 0;
+    }
+
+    input#nameInput {
+      padding: 8px;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: 150px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="splash">🔮 Big/Small Prediction Game Loading...</div>
+
+  <h1>Big / Small Prediction Game</h1>
+
+  <div id="welcome"></div>
+
+  <div id="namePrompt" style="display:none;">
+    <p>Please enter your name:</p>
+    <input id="nameInput" placeholder="Your name" />
+    <button onclick="saveName()">Save</button>
+  </div>
+
+  <div id="coins">💰 Coins: 100</div>
+  <div id="scoreboard">🏆 Score: 0</div>
+
+  <div>
+    <button onclick="makePrediction('small')">Small (0-4)</button>
+    <button onclick="makePrediction('big')">Big (5-9)</button>
+  </div>
+
+  <div id="result"></div>
+
+  <div id="countdown">Next round in: <span id="timer">20</span> seconds</div>
+
+  <button onclick="runGame()">Play Now</button>
+  <button onclick="toggleTheme()">🌗 Toggle Theme</button>
 
   <script>
-    let prediction = null;
-    let countdown = 20;
-    let coins = parseInt(localStorage.getItem('coins')) || 100;
-    let games = parseInt(localStorage.getItem('games')) || 0;
-    let wins = parseInt(localStorage.getItem('wins')) || 0;
-    let losses = parseInt(localStorage.getItem('losses')) || 0;
+    // Splash screen hide after load
+    window.onload = () => {
+      setTimeout(() => {
+        document.getElementById('splash').style.display = 'none';
+      }, 1000);
+    };
 
-    document.getElementById('coinCount').innerText = coins;
-    document.getElementById('games').innerText = games;
-    document.getElementById('wins').innerText = wins;
-    document.getElementById('losses').innerText = losses;
-
-    function updateStorage() {
-      localStorage.setItem('coins', coins);
-      localStorage.setItem('games', games);
-      localStorage.setItem('wins', wins);
-      localStorage.setItem('losses', losses);
+    // Theme toggle and storage
+    if(localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light');
     }
-    // Load user info from localStorage
-let userName = localStorage.getItem('userName') || null;
-let userCoins = parseInt(localStorage.getItem('userCoins') || "100");
-let userScore = parseInt(localStorage.getItem('userScore') || "0");
 
-function updateUI() {
-  document.getElementById("coins").innerText = "💰 Coins: " + userCoins;
-  document.getElementById("scoreboard").innerText = "🏆 Score: " + userScore;
-  if (userName) {
-    document.getElementById("welcome").innerHTML = `👋 Welcome, <strong>${userName}</strong>!`;
-    document.getElementById("namePrompt").style.display = "none";
-  } else {
-    document.getElementById("namePrompt").style.display = "block";
-  }
-}
-
-function saveName() {
-  userName = document.getElementById("nameInput").value.trim();
-  if (userName) {
-    localStorage.setItem("userName", userName);
-    updateUI();
-  }
-}
-
-// Save updated coins and score after a round
-function saveProgress() {
-  localStorage.setItem("userCoins", userCoins);
-  localStorage.setItem("userScore", userScore);
-}
-
-// Call this after every bet result:
-function handleResult(isWin) {
-  if (isWin) {
-    userScore++;
-    userCoins += 10;
-  } else {
-    userCoins = Math.max(0, userCoins - 10);
-  }
-  updateUI();
-  saveProgress();
-}
-
-    // Apply saved theme on load
-    document.body.classList.toggle('light', localStorage.getItem('theme') === 'light');
-    
     function toggleTheme() {
-      const isLight = document.body.classList.toggle('light');
-      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      document.body.classList.toggle('light');
+      localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
     }
 
+    // User data and coins
+    let userName = localStorage.getItem('userName') || null;
+    let userCoins = parseInt(localStorage.getItem('userCoins') || "100");
+    let userScore = parseInt(localStorage.getItem('userScore') || "0");
+    let prediction = null;
+
+    // UI update
+    function updateUI() {
+      document.getElementById("coins").innerText = "💰 Coins: " + userCoins;
+      document.getElementById("scoreboard").innerText = "🏆 Score: " + userScore;
+      if(userName) {
+        document.getElementById("welcome").innerHTML = `👋 Welcome, <strong>${userName}</strong>!`;
+        document.getElementById("namePrompt").style.display = "none";
+      } else {
+        document.getElementById("welcome").innerHTML = "";
+        document.getElementById("namePrompt").style.display = "block";
+      }
+    }
+
+    function saveName() {
+      const input = document.getElementById("nameInput");
+      const name = input.value.trim();
+      if(name.length > 0) {
+        userName = name;
+        localStorage.setItem("userName", userName);
+        updateUI();
+      } else {
+        alert("Please enter a valid name.");
+      }
+    }
+
+    function saveProgress() {
+      localStorage.setItem("userCoins", userCoins);
+      localStorage.setItem("userScore", userScore);
+    }
 
     function makePrediction(value) {
-      if (coins < 10) {
+      if(userCoins < 10) {
         alert("You don't have enough coins to bet!");
         return;
       }
@@ -168,64 +211,55 @@ function handleResult(isWin) {
         const lastDigit = parseInt(hash.slice(-1), 16) % 10;
         return lastDigit;
       } catch (e) {
-        return Math.floor(Math.random() * 10); // fallback
+        // fallback random digit 0-9
+        return Math.floor(Math.random() * 10);
       }
     }
 
     async function runGame() {
-      if (!prediction) {
-        document.getElementById('result').innerText = "Please make a prediction first!";
+      if(!prediction) {
+        alert("Please make a prediction first!");
+        return;
+      }
+
+      if(userCoins < 10) {
+        alert("You don't have enough coins to bet!");
         return;
       }
 
       const lastDigit = await fetchLastDigitFromHash();
       const outcome = lastDigit <= 4 ? 'small' : 'big';
 
-      games++;
-      if (prediction === outcome) {
-        wins++;
-        coins += 10;
+      if(prediction === outcome) {
+        userScore++;
+        userCoins += 10;
         document.getElementById('result').innerText = `🎉 You WON! Number was ${lastDigit} (${outcome.toUpperCase()})`;
       } else {
-        losses++;
-        coins -= 10;
+        userCoins = Math.max(0, userCoins - 10);
         document.getElementById('result').innerText = `❌ You LOST! Number was ${lastDigit} (${outcome.toUpperCase()})`;
       }
 
       prediction = null;
 
-      updateStorage();
-      updateDisplay();
+      saveProgress();
+      updateUI();
 
-      if (coins <= 0) {
-        alert("You are out of coins! Refresh the page to reset.");
-        coins = 0;
-        updateStorage();
+      if(userCoins <= 0) {
+        alert("You are out of coins! Refresh to reset.");
       }
     }
 
-    function updateDisplay() {
-      document.getElementById('coinCount').innerText = coins;
-      document.getElementById('games').innerText = games;
-      document.getElementById('wins').innerText = wins;
-      document.getElementById('losses').innerText = losses;
-    }
-
+    // Countdown timer for auto play every 20 seconds
+    let countdown = 20;
     setInterval(() => {
       countdown--;
       document.getElementById('timer').innerText = countdown;
-      if (countdown <= 0) {
+      if(countdown <= 0) {
         countdown = 20;
         runGame();
-        
       }
-      // Hide splash screen after 1 second
-      window.onload = () => {
-
-        setTimeout(() => document.getElementById('splash').style.display = 'none', 1000);
-      };
-
     }, 1000);
+
     updateUI();
   </script>
 </body>
